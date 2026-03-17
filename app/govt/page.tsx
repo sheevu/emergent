@@ -5,23 +5,23 @@ import { Landmark, ShieldCheck, FileText, BadgeCheck, ExternalLink, IndianRupee 
 
 export default function GovtSupportPage() {
   const schemes = [
-    { 
-      title: "PM SVANidhi", 
-      desc: "Working capital loan for street vendors.", 
+    {
+      title: "PM SVANidhi",
+      desc: "Working capital loan for street vendors.",
       amt: "₹10,000",
-      tag: "Active" 
+      tag: "Active"
     },
-    { 
-      title: "MSME Registration (Udyam)", 
-      desc: "Register your business for govt benefits.", 
+    {
+      title: "MSME Registration (Udyam)",
+      desc: "Register your business for govt benefits.",
       amt: "Free",
-      tag: "Recommended" 
+      tag: "Recommended"
     },
-    { 
-      title: "Pradhan Mantri Mudra Yojana", 
-      desc: "Loans for small business units.", 
+    {
+      title: "Pradhan Mantri Mudra Yojana",
+      desc: "Loans for small business units.",
       amt: "Up to ₹10 Lakh",
-      tag: "Popular" 
+      tag: "Popular"
     },
   ];
 
