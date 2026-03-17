@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --primary: #6366f1;
+  --primary-foreground: #ffffff;
+  --secondary: #64748b;
+  --accent: #f1f5f9;
+  --border: #e2e8f0;
+  --ring: #6366f1;
+  --success: #22c55e;
+  --destructive: #ef4444;
+}
+
+[data-theme='dark'] {
+  --background: #0b0e14;
+  --foreground: #f1f5f9;
+  --card: #151921;
+  --card-foreground: #f1f5f9;
+  --primary: #818cf8;
+  --accent: #1e293b;
+  --border: #2d3748;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.glass-card {
+  background: rgba(var(--card), 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.fab-button {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  height: 4rem;
+  width: 4rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
+  background: var(--primary);
+  color: white;
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.fab-button:hover {
+  transform: scale(1.1);
+}
