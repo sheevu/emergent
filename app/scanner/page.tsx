@@ -10,6 +10,41 @@ export default function ScannerPage() {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+
+  const startCamera = async () => {
+    setIsCameraOpen(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (err) {
+      console.error("Camera Error:", err);
+      alert("Camera access permission chahiye (Need permission).");
+      setIsCameraOpen(false);
+    }
+  };
+
+  const capturePhoto = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement("canvas");
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(videoRef.current, 0, 0);
+      const dataUrl = canvas.toDataURL("image/jpeg");
+      setPreview(dataUrl);
+      setIsCameraOpen(false);
+      
+      // Stop stream
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach(track => track.stop());
+      
+      processImage(dataUrl);
+    }
+  };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -55,37 +90,61 @@ export default function ScannerPage() {
         <div className="space-y-6">
           <div 
             className={`relative group border-2 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center text-center transition-all
-              ${preview ? 'border-indigo-500 bg-indigo-50/10' : 'border-slate-200 dark:border-slate-800 hover:border-indigo-400 bg-white dark:bg-slate-900'}
+              ${preview || isCameraOpen ? 'border-indigo-500 bg-indigo-50/10' : 'border-slate-200 dark:border-slate-800 hover:border-indigo-400 bg-white dark:bg-slate-900'}
             `}
           >
-            {preview ? (
+            {isCameraOpen ? (
+              <div className="w-full space-y-4">
+                <video ref={videoRef} autoPlay playsInline className="w-full rounded-2xl shadow-2xl" />
+                <button 
+                  onClick={capturePhoto}
+                  className="w-full py-4 bg-indigo-600 text-white font-black rounded-2xl hover:bg-indigo-700 active:scale-95 transition-all text-sm uppercase tracking-widest"
+                >
+                  Click Photo
+                </button>
+              </div>
+            ) : preview ? (
               <img src={preview} alt="Preview" className="w-full max-h-64 object-contain rounded-2xl mb-4" />
             ) : (
               <>
-                <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                  <Camera className="w-8 h-8 text-indigo-600" />
+                <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-500/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                  <Camera className="w-10 h-10 text-indigo-600" />
                 </div>
-                <h3 className="text-lg font-bold dark:text-white mb-1">Dairu ki Photo Lein</h3>
-                <p className="text-sm text-slate-500 mb-6">Upload a clear photo of your handwritten records</p>
+                <h3 className="text-xl font-black dark:text-white mb-2">Dairi ki Photo Lein</h3>
+                <p className="text-sm font-bold text-slate-500 mb-8 max-w-[200px]">Handwritten records ki saaf photo click karein.</p>
               </>
             )}
 
-            <label className="cursor-pointer px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all flex items-center gap-2">
-              <Upload className="w-4 h-4" />
-              {preview ? "Change Photo" : "Upload Image"}
-              <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} />
-            </label>
+            {!isCameraOpen && (
+              <div className="flex gap-3">
+                <button 
+                  onClick={startCamera}
+                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl shadow-lg transition-all flex items-center gap-2 text-xs uppercase"
+                >
+                  <Camera className="w-4 h-4" />
+                  Open Camera
+                </button>
+                <label className="cursor-pointer px-6 py-3 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-black rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 text-xs uppercase">
+                  <Upload className="w-4 h-4" />
+                  Upload
+                  <input type="file" className="hidden" accept="image/*" onChange={handleFileUpload} />
+                </label>
+              </div>
+            )}
           </div>
 
-          <div className="p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-            <h3 className="text-lg font-bold dark:text-white mb-4">Manual Entry</h3>
+          <div className="p-8 bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-sm space-y-6">
+            <h3 className="text-lg font-black dark:text-white flex items-center gap-2">
+              <span className="w-2 h-6 bg-amber-500 rounded-full" />
+              Manual Entry
+            </h3>
             <div className="space-y-4">
               <div className="flex gap-4">
-                <input type="text" placeholder="Item Name" className="flex-1 p-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-sm" />
-                <input type="number" placeholder="Amt" className="w-24 p-3 bg-slate-50 dark:bg-slate-800 border-none rounded-xl text-sm" />
+                <input type="text" placeholder="Maal ka Naam" className="flex-1 p-4 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl text-sm font-bold dark:text-white placeholder-slate-400 outline-none focus:ring-2 focus:ring-amber-500" />
+                <input type="number" placeholder="Price" className="w-28 p-4 bg-slate-50 dark:bg-slate-800 border-none rounded-2xl text-sm font-bold dark:text-white placeholder-slate-400 outline-none focus:ring-2 focus:ring-amber-500" />
               </div>
-              <button className="w-full py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl text-sm hover:bg-slate-200 transition-all">
-                Add Row
+              <button className="w-full py-4 bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-black rounded-2xl text-xs uppercase tracking-widest hover:bg-amber-500 hover:text-white transition-all">
+                + Add Custom Row
               </button>
             </div>
           </div>

@@ -21,8 +21,8 @@ export class AgentBrain {
     }
   };
 
-  async query(input: string): Promise<AgentResponse> {
-    const request: AgentRequest = { query: input };
+  async query(input: string, businessProfile?: any): Promise<AgentResponse> {
+    const request: AgentRequest = { query: input, businessProfile };
     
     // 1. Route the intent
     const route = await this.orchestrator.process(request);

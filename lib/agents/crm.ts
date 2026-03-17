@@ -6,7 +6,19 @@ export class CRMAgent implements BaseAgent {
   type: AgentType = 'CRM';
 
   async process(request: AgentRequest): Promise<AgentResponse> {
+    const profile = request.businessProfile;
+    const profileContext = profile ? `
+      Business Context:
+      - Name: ${profile.businessName}
+      - Type: ${profile.businessType}
+      - Location: ${profile.location}
+      - USP: ${profile.usp}
+    ` : "";
+
     const prompt = `
+      You are a CRM specialist for Kirana-Kranti AI.
+      ${profileContext}
+      
       User wants to manage leads/customers.
       Query: "${request.query}"
 

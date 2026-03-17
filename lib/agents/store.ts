@@ -9,8 +9,18 @@ export class StoreAgent implements BaseAgent {
     const products = await StoreService.listProducts();
     const productContext = products.map(p => `${p.name} (ID: ${p.id}, Price: ${p.price}, Stock: ${p.stock})`).join(", ");
 
+    const profile = request.businessProfile;
+    const profileContext = profile ? `
+      Business Context:
+      - Name: ${profile.businessName}
+      - Type: ${profile.businessType}
+      - Location: ${profile.location}
+    ` : "";
+
     const prompt = `
-      User wants to manage store/inventory.
+      You are a Store & Inventory specialist for Kirana-Kranti AI.
+      ${profileContext}
+      
       Available Products: ${productContext}
       Query: "${request.query}"
 

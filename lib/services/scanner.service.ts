@@ -12,6 +12,9 @@ export class ScannerService {
       Analyze this photo of a handwritten diary entry from an Indian shopkeeper.
       Your primary goal is to EXTRACT NUMBERS (Digits) for Sales and Purchases.
       Often these are written as: "Doodh - 50", "Aloo: 100", "Total Biki: 500".
+      
+      CRITICAL: Focus on accuracy of numbers. If a number looks like "400" but could be "900", use your best judgement based on context.
+      All amounts should be numbers (no strings like "50rs").
 
       RETURN JSON FORMAT:
       {

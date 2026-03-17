@@ -1,6 +1,6 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-const API_KEY = "AIzaSyAKD2jiL9jrcKormqaLUta_hAd_J2NaVU8";
+const API_KEY = "AIzaSyDM_68LCWnJorOWTmfzUQU_YXQItU3Uw9I";
 const genAI = new GoogleGenerativeAI(API_KEY);
 
 async function listModels() {

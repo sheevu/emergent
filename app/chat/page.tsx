@@ -41,7 +41,10 @@ export default function ChatPage() {
     setLoading(true);
 
     try {
-      const response = await brain.query(input);
+      const savedProfile = localStorage.getItem("kk_business_profile");
+      const profile = savedProfile ? JSON.parse(savedProfile) : undefined;
+      
+      const response = await brain.query(input, profile);
       const assistantMsg: Message = { 
         id: (Date.now() + 1).toString(), 
         role: 'assistant', 

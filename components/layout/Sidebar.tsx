@@ -8,6 +8,7 @@ import {
   Scan, 
   BarChart3, 
   Store, 
+  Users,
   Settings, 
   MessageSquare,
   Menu,
@@ -20,13 +21,13 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 const navItems = [
-  { name: "Home", icon: Home, href: "/" },
+  { name: "Overview", icon: Home, href: "/" },
+  { name: "Grahak (CRM)", icon: Users, href: "/crm" },
+  { name: "Accounts (Finance)", icon: BarChart3, href: "/accounts" },
   { name: "Scanner", icon: Scan, href: "/scanner" },
-  { name: "Insights", icon: BarChart3, href: "/insights" },
   { name: "My Store", icon: Store, href: "/store" },
-  { name: "AI Chat", icon: MessageSquare, href: "/chat" },
-  { name: "Tutorials", icon: Video, href: "/tutorial" },
-  { name: "Govt Help", icon: Landmark, href: "/govt" },
+  { name: "AI Assistant", icon: MessageSquare, href: "/chat" },
+  { name: "Business Profile", icon: User, href: "/profile" },
 ];
 
 export default function Sidebar() {
