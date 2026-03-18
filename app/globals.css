@@ -1,66 +1,113 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
+  --background: #fcfcfd;
   --foreground: #0f172a;
   --card: #ffffff;
   --card-foreground: #0f172a;
-  --primary: #6366f1;
-  --primary-foreground: #ffffff;
-  --secondary: #64748b;
-  --accent: #f1f5f9;
-  --border: #e2e8f0;
-  --ring: #6366f1;
-  --success: #22c55e;
+  --primary: #7c3aed;
+  --primary-glow: rgba(124, 58, 237, 0.1);
+  --secondary: #ec4899;
+  --accent: #f5f3ff;
+  --border: #f1f0f7;
+  --ring: #7c3aed;
+  --success: #10b981;
   --destructive: #ef4444;
+  --font-main: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 [data-theme='dark'] {
-  --background: #0b0e14;
+  --background: #02040a;
   --foreground: #f1f5f9;
-  --card: #151921;
+  --card: #0d1117;
   --card-foreground: #f1f5f9;
-  --primary: #818cf8;
-  --accent: #1e293b;
-  --border: #2d3748;
+  --primary: #a78bfa;
+  --primary-glow: rgba(167, 139, 250, 0.05);
+  --accent: #161b22;
+  --border: #21262d;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: var(--font-main);
+  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
-.glass-card {
-  background: rgba(var(--card), 0.8);
-  backdrop-filter: blur(12px);
+.premium-card {
+  background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 1rem;
+  box-shadow: 0 4px 20px -5px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+.premium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 40px -10px rgba(124, 58, 237, 0.1);
+  border-color: rgba(124, 58, 237, 0.3);
+}
+
+.gradient-text-vibrant {
+  background: linear-gradient(135deg, #7c3aed 0%, #ec4899 50%, #f43f5e 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-size: 200% auto;
+  animation: shine 4s linear infinite;
 }
 
-.fab-button {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
-  height: 4rem;
-  width: 4rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.4);
-  background: var(--primary);
+@keyframes shine {
+  to { background-position: 200% center; }
+}
+
+.glossy-button {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
   color: white;
-  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);
+  overflow: hidden;
+  position: relative;
 }
 
-.fab-button:hover {
-  transform: scale(1.1);
+.glossy-button::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(rgba(255,255,255,0.1), transparent);
+  transform: rotate(45deg);
+  transition: 0.5s;
+}
+
+.glossy-button:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 20px 25px -5px rgba(124, 58, 237, 0.4);
+}
+
+.glass-pill {
+  background: rgba(var(--card), 0.7);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+[data-theme='dark'] .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
 }

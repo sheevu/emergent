@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Send, Bot, User, Loader2, Sparkles, MessageSquare } from "lucide-react";
+import { Send, Bot, User, Loader2, Sparkles, MessageSquare, Volume2, Mic, Square } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { brain } from "@/lib/agents/brain";
 
@@ -10,6 +10,7 @@ interface Message {
   role: 'assistant' | 'user';
   text: string;
   type?: string;
+  isSpeaking?: boolean;
 }
 
 export default function ChatPage() {
@@ -23,7 +24,31 @@ export default function ChatPage() {
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const stopSpeaking = () => {
+    window.speechSynthesis.cancel();
+    setIsSpeaking(null);
+  };
+
+  const handleSpeak = (text: string, id: string) => {
+    if (isSpeaking === id) {
+      stopSpeaking();
+      return;
+    }
+    stopSpeaking();
+    
+    const utterance = new SpeechSynthesisUtterance(text);
+    // Try to find a Hindi voice, fallback to default
+    const voices = window.speechSynthesis.getVoices();
+    const hindiVoice = voices.find(v => v.lang.includes('hi')) || voices[0];
+    if (hindiVoice) utterance.voice = hindiVoice;
+    
+    utterance.onend = () => setIsSpeaking(null);
+    setIsSpeaking(id);
+    window.speechSynthesis.speak(utterance);
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -57,7 +82,7 @@ export default function ChatPage() {
       setMessages(prev => [...prev, { 
         id: (Date.now() + 1).toString(), 
         role: 'assistant', 
-        text: "Kshama karein, kuch error aa gaya hai. Kripya phir se koshish karein." 
+        text: "Kshama karein, AI se contact nahi ho pa raha. Kripya setting ya API key check karein." 
       }]);
     } finally {
       setLoading(false);
@@ -108,17 +133,34 @@ export default function ChatPage() {
                 }`}>
                   {msg.role === 'user' ? <User className="w-4 h-4 text-slate-600" /> : <Bot className="w-4 h-4 text-indigo-600" />}
                 </div>
-                <div className={`p-4 rounded-2xl shadow-sm ${
+                <div className={`p-4 rounded-3xl shadow-sm relative group/msg ${
                   msg.role === 'user'
                     ? 'bg-indigo-600 text-white rounded-tr-none'
-                    : 'bg-slate-50 dark:bg-slate-800/50 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-800'
+                    : 'bg-white dark:bg-slate-800/80 dark:text-slate-200 rounded-tl-none border border-slate-100 dark:border-slate-800 premium-card'
                 }`}>
                   {msg.type && msg.role === 'assistant' && (
-                    <span className="text-[10px] font-bold uppercase tracking-widest opacity-60 mb-1 block">
-                      {msg.type} AGENT
-                    </span>
+                    <div className="flex items-center justify-between gap-10 mb-2">
+                       <span className="text-[10px] font-black uppercase tracking-widest opacity-60">
+                        {msg.type} AGENT
+                      </span>
+                      <button 
+                        onClick={() => handleSpeak(msg.text, msg.id)}
+                        className={`p-1.5 rounded-lg transition-all ${isSpeaking === msg.id ? 'bg-indigo-600 text-white scale-110' : 'bg-slate-100 dark:bg-slate-700 text-slate-500 hover:text-indigo-600'}`}
+                      >
+                        {isSpeaking === msg.id ? <Square className="w-3 h-3 fill-current" /> : <Volume2 className="w-3 h-3" />}
+                      </button>
+                    </div>
                   )}
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</p>
+                  <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{msg.text}</p>
+                  
+                  {msg.role === 'assistant' && !msg.type && (
+                     <button 
+                        onClick={() => handleSpeak(msg.text, msg.id)}
+                        className={`absolute -right-10 top-2 p-2 rounded-xl opacity-0 group-hover/msg:opacity-100 transition-all ${isSpeaking === msg.id ? 'opacity-100 text-indigo-600' : 'text-slate-300'}`}
+                      >
+                        {isSpeaking === msg.id ? <div className="w-2 h-2 bg-indigo-500 rounded-full animate-ping" /> : <Volume2 className="w-4 h-4" />}
+                      </button>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -137,22 +179,46 @@ export default function ChatPage() {
 
       {/* Input */}
       <div className="p-4 bg-slate-50/50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800">
-        <form onSubmit={handleSend} className="relative max-w-4xl mx-auto">
-          <input
-            autoFocus
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Kuch puchiye (e.g. 'Aaj ka profit kya hai?')"
-            className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-4 pl-6 pr-14 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none shadow-sm dark:text-white"
-          />
+        <form onSubmit={handleSend} className="relative max-w-4xl mx-auto flex gap-2">
+          <div className="relative flex-1">
+            <input
+              autoFocus
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Kuch puchiye (e.g. 'Aaj ka profit kya hai?')"
+              className="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl py-5 pl-6 pr-14 text-sm font-bold focus:ring-4 focus:ring-indigo-500/10 outline-none shadow-sm dark:text-white transition-all"
+            />
+            <button
+              type="button"
+              title="Voice Input (Voice se bole)"
+              onClick={() => {
+                const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                  alert("Aapka browser voice support nahi karta.");
+                  return;
+                }
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'hi-IN';
+                recognition.onstart = () => setInput("Sunn raha hoon... (Listening)");
+                recognition.onresult = (event: any) => {
+                  const transcript = event.results[0][0].transcript;
+                  setInput(transcript);
+                };
+                recognition.start();
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-indigo-600 transition-colors"
+            >
+              <Mic className="w-5 h-5" />
+            </button>
+          </div>
           <button
             type="submit"
+            title="Send Message"
             disabled={!input || loading}
-            aria-label="Send Message"
-            className="absolute right-2 top-2 bottom-2 w-10 h-10 bg-indigo-600 disabled:bg-slate-300 dark:disabled:bg-slate-800 text-white rounded-xl flex items-center justify-center transition-all hover:bg-indigo-700 shadow-lg shadow-indigo-500/20"
+            className="w-14 h-14 bg-indigo-600 disabled:bg-slate-200 dark:disabled:bg-slate-800 text-white rounded-2xl flex items-center justify-center transition-all hover:scale-105 active:scale-95 shadow-lg shadow-indigo-500/30"
           >
-            <Send className="w-4 h-4" />
+            <Send className="w-5 h-5" />
           </button>
         </form>
         <div className="flex items-center justify-center gap-4 mt-3">
@@ -160,7 +226,7 @@ export default function ChatPage() {
             <button
               key={hint}
               onClick={() => setInput(hint)}
-              className="text-[10px] font-bold text-slate-400 hover:text-indigo-600 transition-colors uppercase tracking-wider"
+              className="text-[10px] font-black text-slate-400 hover:text-indigo-600 transition-colors uppercase tracking-widest"
             >
               {hint}
             </button>

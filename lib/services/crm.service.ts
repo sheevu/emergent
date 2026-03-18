@@ -11,7 +11,7 @@ export class CRMService {
   }
 
   static async getDashboardStats() {
-    const leads = db.getLeads();
+    const leads = await db.getLeads();
     return {
       totalLeads: leads.length,
       wonLeads: leads.filter(l => l.status === 'WON').length,

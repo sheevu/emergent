@@ -7,7 +7,7 @@ export class OrchestratorAgent implements BaseAgent {
   type: AgentType = 'ORCHESTRATOR';
 
   async process(request: AgentRequest): Promise<AgentResponse> {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const prompt = `
       You are the Orchestrator for Kirana-Kranti AI, a business assistant for Indian MSMEs.
